@@ -11,5 +11,6 @@ func main() {
 	imageService := service.NewImageService()
 	imageController := controller.NewImageController(imageService)
 	r.GET("/resize", imageController.HandleResize)
+	r.GET("/convertToJPEG", imageController.HandleConvertToJPEG)
 	r.Run("127.0.0.1:8080")
 }

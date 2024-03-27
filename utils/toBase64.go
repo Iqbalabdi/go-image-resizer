@@ -3,26 +3,36 @@ package utils
 import (
 	"bytes"
 	"encoding/base64"
-	"image"
 	"image/jpeg"
+	"image/png"
 	"log"
+
+	u "github.com/Iqbalabdi/go-image-resizer/upsert"
 )
 
 func toBase64(b[] byte) string {
 	return base64.StdEncoding.EncodeToString(b)
 }
 
-func imgToBytes(img image.Image) []byte {
+func imgToBytes(img u.ImageData) []byte {
 	var buf bytes.Buffer
-	err := jpeg.Encode(&buf, img, nil)
-	if err != nil {
-		log.Println("Couldn't encode image")
+	switch img.ImgType {
+	case "jpeg":
+		err := jpeg.Encode(&buf, img.Data, nil)
+		if err != nil {
+			log.Println(err.Error())
+		}
+	case "png":
+		err := png.Encode(&buf, img.Data)
+		if err != nil {
+			log.Println(err.Error())
+		}
 	}
 	return buf.Bytes()
 }
 
-func ConvertToBase64(img image.Image) string {
+func ConvertToBase64(img u.ImageData) string {
 	imgByte := imgToBytes(img)
-	bs64strings := "data:image/jpeg;base64" + toBase64(imgByte)
+	bs64strings := "data:image/"+ img.ImgType + ";base64," + toBase64(imgByte)
 	return bs64strings
 }
